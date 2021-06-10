@@ -1,8 +1,13 @@
+import java.util.List;
 
 public class Bankomat {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		File plik = new File();
+		List<Konto> konta = plik.ReadFile();
+		for(Konto account: konta) {
+			System.out.println(account);
+		}
 
 	}
 

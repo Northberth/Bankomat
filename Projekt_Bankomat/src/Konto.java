@@ -1,11 +1,11 @@
 
 public class Konto {
 	private String name;
-	private int pin;
+	private String pin;
 	private int tries;
-	private int cardNumber;
+	private String cardNumber;
 	private double balance;
-	public Konto(String name, int pin, int tries, int cardNumber, double balance) {
+	public Konto(String name, String pin, int tries, String cardNumber, double balance) {
 		this.name = name;
 		this.pin = pin;
 		this.tries = tries;
@@ -15,16 +15,21 @@ public class Konto {
 	public String getName() {
 		return name;
 	}
-	public int getPin() {
+	public String getPin() {
 		return pin;
 	}
 	public int getTries() {
 		return tries;
 	}
-	public int getCardNumber() {
+	public String getCardNumber() {
 		return cardNumber;
 	}
 	public double getBalance() {
 		return balance;
+	}
+	@Override
+	public String toString() {
+		return "Konto [name=" + name + ", pin=" + pin + ", tries=" + tries + ", cardNumber=" + cardNumber + ", balance="
+				+ balance + "]";
 	}
 }
