@@ -32,4 +32,7 @@ public class Konto {
 		return "Konto [name=" + name + ", pin=" + pin + ", tries=" + tries + ", cardNumber=" + cardNumber + ", balance="
 				+ balance + "]";
 	}
+	public void add20() {
+		balance += 20;
+	}
 }
