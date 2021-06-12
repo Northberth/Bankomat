@@ -43,6 +43,7 @@ public class Konto {
 	public boolean withdraw(double amount) {
 		if(amount > balance) {
 			System.out.println("Brak wystarczaj¹cej iloœci œrodków na koncie");
+			System.out.println("Proœba o wyp³atê mniejszej kwoty. Aktualny stan konta to : " + getBalance() + " z³.");
 		} else if(amount < 50) {
 			System.out.println("Minimalne mo¿na wyp³aciæ 50 z³");
 		} else if(amount%10==0) {
