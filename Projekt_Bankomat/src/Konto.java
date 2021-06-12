@@ -32,15 +32,12 @@ public class Konto {
 		return "Konto [name=" + name + ", pin=" + pin + ", tries=" + tries + ", cardNumber=" + cardNumber + ", balance="
 				+ balance + "]";
 	}
-	public void add20() {
-		balance += 20;
-	}
 	public void removeTry() {
 		if(tries > 0) {
 			tries -= 1;
 		}	
 	}
-	public void successfulLogin() {
+	public void successfullLogin() {
 		tries = 3;
 	}
 	public boolean withdraw(double amount) {
