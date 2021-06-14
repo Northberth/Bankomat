@@ -11,19 +11,18 @@ import javax.swing.JTextField;
 public class Bankomat implements ActionListener {
 	private static List<Konto> konta;
 	private static File plik;
-	JFrame f;
-	JTextField t;
-	JButton b0,b1,b2,b3,b4,b5,b6,b7,b8,b9,bok,blogout,blogin,binfo,bbalance,bwithdraw,bclear,bcancel;
-	static boolean isLogged;
-	private static Konto loggedUser;
-	JLabel linfo, lamount;
-	String amount;
+	private JFrame f;
+	private JButton b0,b1,b2,b3,b4,b5,b6,b7,b8,b9,bok,blogout,blogin,binfo,bbalance,bwithdraw,bclear;
+	private static boolean isLogged;
+	private static int loggedUser;
+	private static JLabel linfo,lamount;
+	private String amount, cardNumber;
 	public Bankomat() {
 		isLogged = false;
-		loggedUser = null;
+		loggedUser = -1;
 		amount = "";
+		cardNumber = "";
 		f = new JFrame("Bankomat");
-		//t = new JTextField();
 		binfo = new JButton("Info");
 		b0 = new JButton("0");
 		b1 = new JButton("1");
@@ -37,20 +36,17 @@ public class Bankomat implements ActionListener {
 		b9 = new JButton("9");
 		bclear = new JButton("Clear");
 		bok = new JButton("OK");
-		bcancel = new JButton("Cancel");
 		blogout = new JButton("Logout");
 		blogin = new JButton("Login");
 		bbalance = new JButton("Balance");
 		bwithdraw = new JButton("Withdraw");
-		linfo = new JLabel("Witaj w bankomacie");
+		linfo = new JLabel("Witaj w bankomacie. Proszê podaæ numer karty");
 		lamount = new JLabel("");
 		f.setLayout(null);
 		f.setVisible(true);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setResizable(false);
 		f.setSize(400, 600);
-		//t.setBounds(30, 40, 280, 30);
-		//f.add(t);
 		binfo.setBounds(310, 15, 60, 30);
 		b0.setBounds(170, 500, 50, 40);
 		b1.setBounds(110, 350, 50, 40);
@@ -63,12 +59,11 @@ public class Bankomat implements ActionListener {
 		b8.setBounds(170, 450, 50, 40);
 		b9.setBounds(230, 450, 50, 40);
 		bok.setBounds(290, 450, 90, 40);
-		bclear.setBounds(290, 400, 90, 40);
-		bcancel.setBounds(290, 350, 90, 40);
+		bclear.setBounds(290, 350, 90, 40);
 		blogout.setBounds(5, 400, 90, 40);
 		blogin.setBounds(5, 350, 90, 40);
 		bbalance.setBounds(5, 450, 90, 40);
-		bwithdraw.setBounds(150, 300, 90, 40);
+		bwithdraw.setBounds(290, 400, 90, 40);
 		linfo.setBounds(5, 50, 600, 40);
 		lamount.setBounds(5, 70, 600, 40);
 		f.add(binfo);
@@ -84,7 +79,6 @@ public class Bankomat implements ActionListener {
 		f.add(b9);
 		f.add(bok);
 		f.add(bclear);
-		f.add(bcancel);
 		f.add(blogout);
 		f.add(blogin);
 		f.add(bbalance);
@@ -104,7 +98,6 @@ public class Bankomat implements ActionListener {
 		b9.addActionListener(this);
 		bok.addActionListener(this);
 		bclear.addActionListener(this);
-		bcancel.addActionListener(this);
 		blogout.addActionListener(this);
 		blogin.addActionListener(this);
 		bbalance.addActionListener(this);
@@ -113,48 +106,36 @@ public class Bankomat implements ActionListener {
 	public static void main(String[] args) {
 		plik = new File();
 		konta = plik.ReadFile();
+		/*
 		for(Konto account: konta) {
 			System.out.println(account);
 		}
+		*/
 		new Bankomat();
-		Scanner scanner = new Scanner(System.in);
-		boolean userLogin = false;
-		while(userLogin != true) {
-			System.out.println("Proszê podaæ numer karty");
-			String userCardNumber  = scanner.nextLine();
-			System.out.println("Proszê podaæ numer pin");
-			String userpin  = scanner.nextLine();
-			userLogin = login(userCardNumber,userpin);
-		}
 	}
-	public static boolean login(String cardNumber, String pin) {
+	public static void login(String cardNumber, String pin) {
 		for(Konto account: konta) {
 			if(account.getCardNumber().equals(cardNumber)) {
 				if (account.getTries() <= 0) {
-					System.out.println("Konto zablokowane. Proszê siê skontaktowaæ z administratorem");
+					linfo.setText("Konto zablokowane. Proszê siê skontaktowaæ z administratorem");
 				}
 				else if(account.getPin().equals(pin)) {
-					System.out.println("Zalogowano pomyœlnie");
-					System.out.println("Witaj " + account.getName());
+					linfo.setText("Zalogowano pomyœlnie - Witaj " + account.getName());			
 					account.successfullLogin();
 					plik.SaveFile(konta);
 					isLogged = true;
-					loggedUser = account;
-					return true;
+					loggedUser = konta.indexOf(account);
+					System.out.println(loggedUser);
 				} else {
 					account.removeTry();
-					System.out.println("Niepoprawny pin. Pozosta³o: " + account.getTries());
+					linfo.setText("Niepoprawny pin. Pozosta³e próby: " + account.getTries());
 					if (account.getTries() == 0) {
-						System.out.println("Konto zosta³o zablokowane. Proszê siê skontaktowaæ z administratorem");
+						linfo.setText("Konto zosta³o zablokowane. Proszê siê skontaktowaæ z administratorem");
 					}
 					plik.SaveFile(konta);
 				}
 			}
 		}
-		return false;
-	}
-	public static void userMenu(Konto konto) {
-		
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -209,6 +190,56 @@ public class Bankomat implements ActionListener {
 		}else if(e.getSource() == bclear) {
 			amount = "";
 			lamount.setText(amount);
+		}else if(e.getSource() == blogin) {
+			if(amount.length() == 16) {
+				cardNumber = amount;
+				amount = "";
+				lamount.setText(amount);
+				linfo.setText("Proszê podaæ numer pin i wcisn¹æ klawisz OK.");
+			}else {
+				linfo.setText("Za krótki numer karty");
+				amount = "";
+				lamount.setText(amount);
+			}
+		}else if(e.getSource() == bok) {
+			if(cardNumber != "") {
+				login(cardNumber,amount);
+			}
+			amount = "";
+			lamount.setText(amount);
+		}else if(e.getSource() == bwithdraw) {
+			if(isLogged) {
+				linfo.setText(konta.get(loggedUser).withdraw(Double.parseDouble(amount)));
+				amount = "";
+				plik.SaveFile(konta);
+			}else {
+				linfo.setText("Proszê najpierw siê zalogowaæ. Proszê podaæ numer karty");
+				amount = "";
+				lamount.setText(amount);
+			}
+		}else if(e.getSource() == bbalance) {
+			if(isLogged) {
+				lamount.setText(String.valueOf(konta.get(loggedUser).getBalance()));
+				amount = "";
+				linfo.setText("Twój stan konta to: ");
+			}else {
+				linfo.setText("Proszê najpierw siê zalogowaæ. Proszê podaæ numer karty");
+				amount = "";
+				lamount.setText(amount);
+			}
+		}else if(e.getSource() == blogout) {
+			if(isLogged) {
+				linfo.setText("Poprawnie wylogowano. Witaj w bankomacie. Proszê podaæ numer karty");
+				amount = "";
+				isLogged = false;
+				loggedUser = -1;
+				cardNumber = "";
+				lamount.setText(amount);
+			}else {
+				linfo.setText("Proszê najpierw siê zalogowaæ. Proszê podaæ numer karty");
+				amount = "";
+				lamount.setText(amount);
+			}
 		}
 	}
 }
